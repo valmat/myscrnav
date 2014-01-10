@@ -106,29 +106,28 @@ private:
     
 public:
     
-    myScrNavApp(/*Php::Parameters &params*/) {
+    myScrNavApp() {
         // int
-        interval = 20;
-        max_tab  = 6;
-        mid_tab  = 10;
-        startPos = 0;
-        limitPos = 0;
-        pageCnt  = 0;
-        pageNo   = 0;
-        LeftInd  = 0;
-        RightInd = 0;
+        this->interval = 20;
+        this->max_tab  = 6;
+        this->mid_tab  = 10;
+        this->startPos = 0;
+        this->limitPos = 0;
+        this->pageCnt  = 0;
+        this->pageNo   = 0;
+        this->LeftInd  = 0;
+        this->RightInd = 0;
         
         // string
-        css_name = "navline";
-        space    = "<space></space>";
-        prefix   = "?part=";
-        postfix  = "&prm=132";
-        //curPath  = new string("");
-        curPath  = "";
+        this->css_name = "navline";
+        this->space    = "<space></space>";
+        this->prefix   = "?part=";
+        this->postfix  = "&prm=132";
+        this->curPath  = "";
         
         
         std::cout << "myScrNavApp::myScrNavApp" << std::endl;
-        std::cout << css_name << std::endl;
+        
     }
         
     /*
@@ -140,6 +139,19 @@ public:
     virtual void __construct(Php::Parameters &params) {
         
         cout << "myScrNavApp::__construct" << endl;
+        
+        
+        //cout << "global g1: " << Php::globals["g1"].stringValue() << endl;
+        /*
+        string q = Php::globals["_GET"]["q"];
+        cout << "global _GET[q] = " << q << endl;
+        cout << "global _GET[q] = " << q.size() << endl;
+        cout << "global _GET[q] = " << (new Php::Value(q))->numericValue() << endl;
+        */
+        
+        
+        
+        
         
         if (params.size() != 3) {
             throw Php::Exception("Requires 3 parameters");
@@ -159,13 +171,6 @@ public:
         //cout << "output: " << output << endl;
     }
         
-    void myMethod(Php::Parameters &params) {
-        std::cout << "myMethod is called." << std::endl;
-        //std::cout << "_x: " << _x << std::endl;
-        //_x = params[0];
-        //std::cout << "New _x=" << _x << std::endl;
-    }
-    
     virtual void __destruct() {}
     
     // SETERS
@@ -282,9 +287,6 @@ public:
     Php::Value getPageNo() {
         return this->pageNo;
     }
-    
-    
-    
         
     /*
      * Номер страницы
@@ -294,7 +296,135 @@ public:
     Php::Value getInterval() {
         return this->interval;
     }
-    
+        
+        
+        
+    /*
+     * function show
+     * @param void
+     */
+    Php::Value show() {
+        
+        this->init();
+        
+        string rez;
+        int i;
+        
+        // Если количество страниц меньше 2, навигационная линия не требуется
+        if(this->pageCnt < 2)
+            return "";
+       
+        // Левый край
+        rez =  "";
+        if(1==this->LeftInd) {
+            rez = this->prnt(0);
+        }else if(this->LeftInd > 1){
+            rez = this->prnt(0) + this->space;
+            if(this->mid_tab && ( this->LeftInd > this->mid_tab + this->max_tab) ){
+                rez += this->prnt(this->LeftInd-this->mid_tab) + this->space;
+            }
+        }
+        
+        // Середина
+        for(i=this->LeftInd; i < this->pageNo; i++) {
+            rez += this->prnt(i);
+        }
+        rez += this->prnt(this->pageNo,true);
+        for(i=this->pageNo+1; i <= this->RightInd; i++) {
+            rez += this->prnt(i);
+        }
+        
+        // Правый край
+        if((this->pageCnt-2)==this->RightInd) {
+            rez += this->prnt(this->pageCnt-1);
+        }else if(this->RightInd < (this->pageCnt-1)) {
+            if(this->mid_tab && ( this->RightInd < this->pageCnt-1 - this->mid_tab - this->max_tab) ){
+                rez += this->space + this->prnt(this->RightInd + this->mid_tab);
+            }
+            rez += this->space + this->prnt(this->pageCnt-1);
+        }
+        
+        return "<div class=\"" + this->css_name + "\">" + rez + "</div>";
+    }
+        
+    /*
+     * Определяет и возвращает номер страницы
+     * @param string
+     * @return string
+     */
+    /*static*/ Php::Value pageNoGET(Php::Parameters &params) {
+        if (params.size() == 0) {
+            return 0;
+        }
+        string var = (new Php::Value(params[0]))->stringValue();
+        string get = Php::globals["_GET"][var];
+        
+        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
+        return (new Php::Value(get))->numericValue()-1;
+    }
+        
+        
+private:
+        
+    /*
+     * Расчет основных параметров
+     * function init
+     */
+    void init() {
+        if(this->interval*this->pageNo >= this->Count || this->pageNo < 0) {
+            this->pageNo = 0;
+        }
+        
+        int startPos = this->interval * this->pageNo;
+        int limitPos = ( (this->interval*this->pageNo + this->interval - this->Count)<0 )?this->interval:(this->Count - this->interval*this->pageNo);
+        
+        int pageCnt = (this->Count - this->Count%this->interval)/this->interval;
+        if(this->Count%this->interval>0) pageCnt++;
+        
+        int LeftInd  = this->pageNo - this->max_tab;
+        int RightInd = this->pageNo + this->max_tab;
+        
+        if(this->pageNo < this->max_tab) {
+            // длина правого отствупа
+            int RightTab = this->max_tab + this->max_tab - this->pageNo;
+            LeftInd  = 0;
+            RightInd = std::min(this->pageNo + RightTab, pageCnt-1);
+        }else if(pageCnt - 1 - this->pageNo < this->max_tab) {
+            // длина левого отствупа
+            int LeftTab  = this->max_tab + this->max_tab - pageCnt + this->pageNo;
+            LeftInd  = std::max(0, this->pageNo - LeftTab - 1);
+            RightInd = pageCnt-1;
+        }
+        RightInd = std::min(RightInd, pageCnt-1);
+        
+        this->startPos = startPos;
+        this->limitPos = limitPos;
+        this->pageCnt  = pageCnt;
+        this->LeftInd  = LeftInd;
+        this->RightInd = RightInd;
+    }
+        
+    /*
+     * Печать ссылки для навигационной линии
+     * function prnt
+     */
+    string prnt(int iUrl, bool isCur = false) {
+        string link;
+        int iCapt;
+        if(0 == iUrl) {
+            iCapt = 1;
+            link = this->curPath;
+        } else {
+            iCapt = ++iUrl;
+            link = this->curPath + this->prefix + std::to_string(iUrl) + this->postfix;
+        }
+        
+        if(!isCur) {
+            return " <a href=\"" + link + "\">" + std::to_string(iCapt) + "</a> ";
+        } else {
+            return " <span>" + std::to_string(iCapt) + "</span> ";
+        }
+    }
 
 };
 
@@ -310,14 +440,19 @@ extern "C"
         
         // add the custom class ot the extension
         extension.add("myScrNav", Php::Class<myScrNavApp>({
-                Php::Public("myMethod", Php::Method<myScrNavApp>(&myScrNavApp::myMethod), {
-                    Php::ByVal("newX", Php::numericType)
-                }),
                 Php::Public("__construct", Php::Method<myScrNavApp>(&myScrNavApp::__construct), {
                     Php::ByVal("pageNo",  Php::numericType),
                     Php::ByVal("Count",   Php::numericType),
                     Php::ByVal("curPath", Php::stringType)
                 }),
+                
+                Php::Public("show", Php::Method<myScrNavApp>(&myScrNavApp::show)),
+                
+                // static
+                Php::Public("pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
+                    Php::ByVal("var", Php::stringType)
+                }),
+                
                 
                 //GETERS
                 Php::Public("getStartPos", Php::Method<myScrNavApp>(&myScrNavApp::getStartPos)),
@@ -353,6 +488,23 @@ extern "C"
                 
                 
             }));
+                
+                
+                
+            /*    
+            // static
+            //extension.add("myScrNav::pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
+            extension.add("myScrNav::pageNoGET", myScrNavApp::pageNoGET, {
+                Php::ByVal("var", Php::stringType)
+            });
+            */
+                
+                
+                
+                
+                
+                
+                
                 
         // return the extension module
         return extension.module();
