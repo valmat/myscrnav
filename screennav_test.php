@@ -23,6 +23,25 @@ function microtime_float(){
    }
 $time_start = microtime_float();
 ################################################################################
+    
+    
+    $a = new myScrNav(1,2,"Hellow my world");
+    
+    $a->getStartPos();
+    $a->getLimitPos();
+    $a->getPageCnt();
+    $a->getStartPos();
+    //$a->getInterval();
+
+
+
+    
+    $a->setInterval(156);
+    
+    echo $a->getInterval();
+    echo $a->getPageNo();
+    
+    /*
     require 'class.screennav.php';
     
     $scr = new ScreenNav(ScreenNav::pageNo('part'), $cnt, 'http://test/phpcpp/screennav_test.php');
@@ -38,7 +57,7 @@ $time_start = microtime_float();
     for($i = $start; $i<$lim; $i++) {
         echo '<br>' . $arr[$i];
     }
-    
+    */
     
     
     
