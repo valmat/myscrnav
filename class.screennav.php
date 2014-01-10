@@ -9,12 +9,12 @@
     /**
      * Количество элементов на странице
      */
-    const INTRVAL   = 20;
+    private $interval = 20;
     
     /**
      * Максимальный отображаемый отступ
      */
-    const MAX_TAB   = 6;
+    private $max_tab   = 6;
     
     /**
      * Размер среднего таба. Если 0, то не используется
@@ -57,6 +57,11 @@
     private $pageCnt = 0;
     
     /**
+      * Количество элементов
+      */
+    private $Count;
+    
+    /**
       * Номер страницы
       */
     private $pageNo  = 0;
@@ -83,70 +88,39 @@
      * @param int $Count
      * @param string $curPath
      */
-    public function __construct($pageNo, $Count, $curPath, $interval = self::INTRVAL) {
-        if($interval*$pageNo >= $Count || $pageNo<0) {
-            $pageNo = 0;
-        }
-        $startPos = $interval * $pageNo;
-        $limitPos = ( ($interval*$pageNo + $interval - $Count)<0 )?$interval:($Count-$interval*$pageNo);
-        
-        $pageCnt=($Count - $Count%$interval)/$interval;
-        if($Count%$interval>0) $pageCnt++;
-        
-        $LeftInd  = $pageNo - self::MAX_TAB;
-        $RightInd = $pageNo + self::MAX_TAB;
-        
-        if($pageNo < self::MAX_TAB) {
-            # длина правого отствупа
-            $RightTab = self::MAX_TAB + self::MAX_TAB - $pageNo;
-            $LeftInd  = 0;
-            $RightInd = min($pageNo + $RightTab, $pageCnt-1);
-        }elseif($pageCnt - 1 - $pageNo < self::MAX_TAB) {
-            # длина левого отствупа
-            $LeftTab  = self::MAX_TAB + self::MAX_TAB - $pageCnt + $pageNo;
-            $LeftInd  = max(0, $pageNo - $LeftTab - 1);
-            $RightInd = $pageCnt-1;
-        }
-        $RightInd = min($RightInd, $pageCnt-1);
-        
-        $this->startPos = $startPos;
-        $this->limitPos = $limitPos;
-        $this->pageCnt  = $pageCnt;
-        $this->pageNo   = $pageNo;
-        $this->LeftInd  = $LeftInd;
-        $this->RightInd = $RightInd;
-        
-        $this->curPath  = $curPath;
+    public function __construct($pageNo, $Count, $curPath) {
+        $this->pageNo  = $pageNo;
+        $this->Count   = $Count;
+        $this->curPath = $curPath;
     }
         
     /*
-     * function __construct
-     * @param int $pageNo
-     * @param int $Count
-     * @param string $curPath
+     * Расчет основных параметров
+     * function init
      */
     private function init() {
-        if($interval*$pageNo >= $Count || $pageNo<0) {
-            $pageNo = 0;
+        if($this->interval*$this->pageNo >= $this->Count || $this->pageNo<0) {
+            $this->pageNo = 0;
         }
-        $startPos = $interval * $pageNo;
-        $limitPos = ( ($interval*$pageNo + $interval - $Count)<0 )?$interval:($Count-$interval*$pageNo);
         
-        $pageCnt=($Count - $Count%$interval)/$interval;
-        if($Count%$interval>0) $pageCnt++;
+        $startPos = $this->interval * $this->pageNo;
+        $limitPos = ( ($this->interval*$this->pageNo + $this->interval - $this->Count)<0 )?$this->interval:($this->Count - $this->interval*$this->pageNo);
         
-        $LeftInd  = $pageNo - self::MAX_TAB;
-        $RightInd = $pageNo + self::MAX_TAB;
+        $pageCnt=($this->Count - $this->Count%$this->interval)/$this->interval;
+        if($this->Count%$this->interval>0) $pageCnt++;
         
-        if($pageNo < self::MAX_TAB) {
+        $LeftInd  = $this->pageNo - $this->max_tab;
+        $RightInd = $this->pageNo + $this->max_tab;
+        
+        if($this->pageNo < $this->max_tab) {
             # длина правого отствупа
-            $RightTab = self::MAX_TAB + self::MAX_TAB - $pageNo;
+            $RightTab = $this->max_tab + $this->max_tab - $this->pageNo;
             $LeftInd  = 0;
-            $RightInd = min($pageNo + $RightTab, $pageCnt-1);
-        }elseif($pageCnt - 1 - $pageNo < self::MAX_TAB) {
+            $RightInd = min($this->pageNo + $RightTab, $pageCnt-1);
+        }elseif($pageCnt - 1 - $this->pageNo < $this->max_tab) {
             # длина левого отствупа
-            $LeftTab  = self::MAX_TAB + self::MAX_TAB - $pageCnt + $pageNo;
-            $LeftInd  = max(0, $pageNo - $LeftTab - 1);
+            $LeftTab  = $this->max_tab + $this->max_tab - $pageCnt + $this->pageNo;
+            $LeftInd  = max(0, $this->pageNo - $LeftTab - 1);
             $RightInd = $pageCnt-1;
         }
         $RightInd = min($RightInd, $pageCnt-1);
@@ -154,11 +128,8 @@
         $this->startPos = $startPos;
         $this->limitPos = $limitPos;
         $this->pageCnt  = $pageCnt;
-        $this->pageNo   = $pageNo;
         $this->LeftInd  = $LeftInd;
         $this->RightInd = $RightInd;
-        
-        $this->curPath  = $curPath;
     }
     
     /*
@@ -166,6 +137,9 @@
      * @param void
      */
     public function show() {
+        
+        $this->init();
+        
         # Если количество страниц меньше 2, навигационная линия не требуется
         if($this->pageCnt < 2)
             return '';
@@ -176,7 +150,7 @@
             $rez = $this->prnt(0);
         }elseif($this->LeftInd > 1){
             $rez = $this->prnt(0) . $this->space;
-            if($this->mid_tab && ( $this->LeftInd > $this->mid_tab+self::MAX_TAB) ){
+            if($this->mid_tab && ( $this->LeftInd > $this->mid_tab + $this->max_tab) ){
                 $rez .= $this->prnt($this->LeftInd-$this->mid_tab) . $this->space;
             }
         }
@@ -194,7 +168,7 @@
         if(($this->pageCnt-2)==$this->RightInd) {
             $rez .= $this->prnt($this->pageCnt-1);
         }elseif($this->RightInd < ($this->pageCnt-1)){
-            if($this->mid_tab && ( $this->RightInd < $this->pageCnt-1 - $this->mid_tab - self::MAX_TAB) ){
+            if($this->mid_tab && ( $this->RightInd < $this->pageCnt-1 - $this->mid_tab - $this->max_tab) ){
                 $rez .= $this->space . $this->prnt($this->RightInd + $this->mid_tab);
             }
             $rez .= $this->space . $this->prnt($this->pageCnt-1);
@@ -211,16 +185,14 @@
         if(0==$url) {
             $capt = 1;
             $url = $this->curPath;
-        }else{
+        } else {
             $capt = ++$url;
-            //$url = $this->curPath . $url.'/';
-            //$url = $this->curPath . $this->prefix . $url;
             $url = $this->curPath . $this->prefix . $url . $this->postfix;
         }
         
         if(!$isCur) {
             return ' <a href="'.$url.'">'.$capt.'</a> ';
-        }else{
+        } else {
             return ' <span>'.$capt.'</span> ';
         }
     }
