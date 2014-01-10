@@ -347,22 +347,6 @@ public:
         return "<div class=\"" + this->css_name + "\">" + rez + "</div>";
     }
         
-    /*
-     * Определяет и возвращает номер страницы
-     * @param string
-     * @return string
-     */
-    /*static*/ Php::Value pageNoGET(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return 0;
-        }
-        string var = (new Php::Value(params[0]))->stringValue();
-        string get = Php::globals["_GET"][var];
-        
-        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-        return (new Php::Value(get))->numericValue()-1;
-    }
-        
         
 private:
         
@@ -429,21 +413,21 @@ private:
 };
 
         
-    /*
-     * Определяет и возвращает номер страницы
-     * @param string
-     * @return string
-     */
-    Php::Value GETpageNom(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return 0;
-        }
-        string var = (new Php::Value(params[0]))->stringValue();
-        string get = Php::globals["_GET"][var];
-        
-        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-        return (new Php::Value(get))->numericValue()-1;
+/*
+ * Определяет и возвращает номер страницы
+ * @param string
+ * @return string
+ */
+Php::Value GETpageNom(Php::Parameters &params) {
+    if (params.size() == 0) {
+        return 0;
     }
+    string var = (new Php::Value(params[0]))->stringValue();
+    string get = Php::globals["_GET"][var];
+    int    rez = (new Php::Value( get ))->numericValue();
+    // (isset($_GET[var]))?((int)$_GET[var]-1):0;
+    return rez ? ((int)rez-1):0;
+}
 
 // Symbols are exported according to the "C" language
 extern "C" 
@@ -464,19 +448,13 @@ extern "C"
                 
                 Php::Public("show", Php::Method<myScrNavApp>(&myScrNavApp::show)),
                 
-                // static
-                Php::Public("pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
-                    Php::ByVal("var", Php::stringType)
-                }),
-                
-                
                 //GETERS
                 Php::Public("getStartPos", Php::Method<myScrNavApp>(&myScrNavApp::getStartPos)),
                 Php::Public("getLimitPos", Php::Method<myScrNavApp>(&myScrNavApp::getLimitPos)),
                 Php::Public("getPageCnt",  Php::Method<myScrNavApp>(&myScrNavApp::getPageCnt)),
                 Php::Public("getPageNo", Php::Method<myScrNavApp>(&myScrNavApp::getPageNo)),
                 
-                Php::Public("getInterval", Php::Method<myScrNavApp>(&myScrNavApp::getInterval),{}),
+                Php::Protected("getInterval", Php::Method<myScrNavApp>(&myScrNavApp::getInterval),{}),
                 
                 
                 // SETERS
@@ -506,25 +484,9 @@ extern "C"
             }));
                 
                 
-                
-            /*    
-            // static
-            //extension.add("myScrNav::pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
-            extension.add("myScrNav::pageNoGET", myScrNavApp::pageNoGET, {
-                Php::ByVal("var", Php::stringType)
-            });
-            */
-            //extension.add("myScrNav::pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
             extension.add("myScrNav_pageNoGET", GETpageNom, {
                 Php::ByVal("var", Php::stringType)
             });
-            
-                
-                
-                
-                
-                
-                
                 
                 
         // return the extension module
