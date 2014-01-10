@@ -428,6 +428,22 @@ private:
 
 };
 
+        
+    /*
+     * Определяет и возвращает номер страницы
+     * @param string
+     * @return string
+     */
+    Php::Value GETpageNom(Php::Parameters &params) {
+        if (params.size() == 0) {
+            return 0;
+        }
+        string var = (new Php::Value(params[0]))->stringValue();
+        string get = Php::globals["_GET"][var];
+        
+        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
+        return (new Php::Value(get))->numericValue()-1;
+    }
 
 // Symbols are exported according to the "C" language
 extern "C" 
@@ -498,6 +514,11 @@ extern "C"
                 Php::ByVal("var", Php::stringType)
             });
             */
+            //extension.add("myScrNav::pageNoGET", Php::Method<myScrNavApp>(&myScrNavApp::pageNoGET), {
+            extension.add("myScrNav_pageNoGET", GETpageNom, {
+                Php::ByVal("var", Php::stringType)
+            });
+            
                 
                 
                 
