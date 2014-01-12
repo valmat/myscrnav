@@ -15,7 +15,7 @@ function microtime_float(){
 $time_start = microtime_float();
 ################################################################################
     $MODE_CPP = true;
-    $MODE_CPP = false;
+    //$MODE_CPP = false;
     
     //$cnt = 9876543210;
     $cnt = 9876543210;
@@ -29,6 +29,11 @@ $time_start = microtime_float();
     }
 
     $scr->setInterval(10);
+    $scr->setPrefix('?qwe&part=');
+    $scr->setSpace('<space>===</space>');
+    $scr->setPostfix('&prm=132');
+    
+    
 
     
 ?>

@@ -143,10 +143,7 @@ public:
      * @param string $space
      */
     void setSpace(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->space = (new Php::Value(params[0]))->stringValue();
+        _set_param(params, &this->space);
     }    
     
     /*
@@ -154,10 +151,7 @@ public:
      * @param string $css_name
      */
     void setCssName(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->css_name = (new Php::Value(params[0]))->stringValue();
+        _set_param(params, &this->css_name);
     }    
     
     /*
@@ -165,10 +159,7 @@ public:
      * @param int $mid_tab
      */
     void setMidTab(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->mid_tab = params[0];
+        _set_param(params, &this->mid_tab);
     }    
     
     /*
@@ -176,10 +167,7 @@ public:
      * @param int $max_tab
      */
     void setMaxTab(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->max_tab = params[0];
+        _set_param(params, &this->max_tab);
     }    
         
     /*
@@ -187,10 +175,7 @@ public:
      * @param int $interval
      */
     void setInterval(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->interval = params[0];
+        _set_param(params, &this->interval);
     }
         
     /*
@@ -198,10 +183,7 @@ public:
      * @param string $prefix
      */
     void setPrefix(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->prefix = (new Php::Value(params[0]))->stringValue();
+        _set_param(params, &this->prefix);
     }
         
     /*
@@ -209,10 +191,7 @@ public:
      * @param string $postfix
      */
     void setPostfix(Php::Parameters &params) {
-        if (params.size() == 0) {
-            return;
-        }
-        this->postfix = (new Php::Value(params[0]))->stringValue();
+        _set_param(params, &this->postfix);
     }
         
     // GETERS
@@ -372,6 +351,28 @@ private:
         } else {
             return " <span>" + std::to_string(iCapt) + "</span> ";
         }
+    }
+
+    /*
+     * function _set_param
+     * default string seter
+     */
+    void _set_param(Php::Parameters &params, string * var) {
+        if (params.size() == 0) {
+            return;
+        }
+        *var = (new Php::Value(params[0]))->stringValue();
+    }
+
+    /*
+     * function _set_param
+     * default int seter
+     */
+    void _set_param(Php::Parameters &params, int * var) {
+        if (params.size() == 0) {
+            return;
+        }
+        *var = params[0];
     }
 
 };

@@ -39,7 +39,7 @@
     /**
      * Префикс, добавляемый для обозначения номера страниц
      */
-    private $postfix  = '&prm=132';
+    private $postfix  = '';
     
     /**
       * Номер начального элемента
@@ -201,7 +201,7 @@
      * function setSpase
      * @param string $space
      */
-    public function setSpase($space) {
+    public function setSpace($space) {
         $this->space = $space;
     }    
     
