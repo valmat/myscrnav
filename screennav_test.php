@@ -33,10 +33,10 @@ echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
 */
     
     if($MODE_CPP) {
-        $scr = new myScrNav(myScrNav_pageNoGET('part'), $cnt, 'http://test/phpcpp/screennav_test.php');
+        $scr = new myScrNav(myScrNav_pageNoGET('part'), $cnt, 'http://test/phpcpp/myScrNav/screennav_test.php');
     } else {
-        require 'class.screennav.php';
-        $scr = new ScreenNav(ScreenNav::pageNo('part'), $cnt, 'http://test/phpcpp/screennav_test.php');
+        require 'php/class.screennav.php';
+        $scr = new ScreenNav(ScreenNav::pageNo('part'), $cnt, 'http://test/phpcpp/myScrNav/screennav_test.php');
     }
 
     $scr->setInterval(15);
