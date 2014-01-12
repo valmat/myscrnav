@@ -81,6 +81,11 @@
       */
     private $RightInd = 0;
     
+    /**
+      * Показывать ли количество объектов
+      */
+    private $_showCount = false;
+    
     
     /*
      * function __construct
@@ -174,7 +179,10 @@
             $rez .= $this->space . $this->prnt($this->pageCnt-1);
         }
         
-        return '<div class="'. $this->css_name .'">' . $rez . '</div>';
+        return '<div class="'. $this->css_name .'">' .
+                $rez .
+                ($this->_showCount ? '<b>' . $this->Count . '</b>' : '') .
+                '</div>';
     }
     
     /*
@@ -234,6 +242,7 @@
      * @param int $interval
      */
     public function setInterval($interval) {
+        if($interval <=0 ) return false;
         $this->interval = $interval;
     }
         
@@ -251,6 +260,15 @@
      */
     public function setPostfix($postfix) {
         $this->postfix = $postfix;
+    }
+        
+    /*
+     * function showCount
+     * set showCount
+     * @param bool $sc
+     */
+    public function showCount($sc) {
+        $this->_showCount = (bool)$sc;
     }
         
     /*

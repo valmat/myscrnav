@@ -17,9 +17,20 @@ $time_start = microtime_float();
     $MODE_CPP = true;
     //$MODE_CPP = false;
     
+    $cnt = 5681;
     //$cnt = 9876543210;
-    $cnt = 9876543210;
+    
+    /*
+    // Test funct
+    //echo myScrNav_pageNoGET('part');
+    function ScreenNav_pageNo($var) {return (isset($_GET[$var]))?((int)$_GET[$var]-1):0;}   echo ScreenNav_pageNo('part');
+echo '<br>';
+echo '<hr>memory usage: '.(memory_get_usage()/1024-$memory_get_usage_start) .'Kb<br>';
+echo '<hr>memory peak_usage: '.(memory_get_peak_usage()/1024-$memory_get_usage_start) .'Kb<br>';
 
+echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
+    exit;
+*/
     
     if($MODE_CPP) {
         $scr = new myScrNav(myScrNav_pageNoGET('part'), $cnt, 'http://test/phpcpp/screennav_test.php');
@@ -28,10 +39,12 @@ $time_start = microtime_float();
         $scr = new ScreenNav(ScreenNav::pageNo('part'), $cnt, 'http://test/phpcpp/screennav_test.php');
     }
 
-    $scr->setInterval(10);
+    $scr->setInterval(15);
     $scr->setPrefix('?qwe&part=');
-    $scr->setSpace('<space>===</space>');
+    $scr->setSpace('<space>...</space>');
     $scr->setPostfix('&prm=132');
+    $scr->showCount(true);
+    
     
     
 
@@ -100,6 +113,19 @@ $time_start = microtime_float();
   color:#000;
   font-weight:bold;
 }
+.navline b{
+  color:#FFF;
+  margin-left: 10px;
+  position: relative;
+  top: 3px;
+  background: #E05900;
+  padding: 3px;
+  
+  -webkit-border-radius:15px;
+  border-radius:15px;
+  -o-border-radius:15px;
+  -moz-border-radius:15px;
+}
   </style>
   </head>
 <body>
@@ -115,9 +141,16 @@ $time_start = microtime_float();
         echo '<br>' , $i+1;
     }
     
+    var_export(array(
+	'getStartPos' => $scr->getStartPos(),
+	'getLimitPos' => $scr->getLimitPos(),
+	'getPageCnt' => $scr->getPageCnt(),
+	'getPageNo' => $scr->getPageNo(),
+    ));
     
     
     
+    //unset($scr);
     
     
 ################################################################################

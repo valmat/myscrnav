@@ -71,7 +71,7 @@ private:
     /**
       * Количество элементов
       */
-    int Count;
+    long int Count;
     
     /**
       * Номер страницы
@@ -93,6 +93,11 @@ private:
       */
     int RightInd;
     
+    /**
+      * Показывать ли количество объектов
+      */
+    bool _showCount;
+    
 public:
     
     myScrNavApp() {
@@ -113,6 +118,9 @@ public:
         this->prefix   = "?part=";
         this->postfix  = "";
         this->curPath  = "";
+
+        // bool
+        this->_showCount = false;
     }
         
     /*
@@ -129,8 +137,8 @@ public:
             this->curPath = "";
             return;
         }
-        this->pageNo  = params[0];
-        this->Count   = params[1];
+        this->pageNo  = (new Php::Value(params[0]))->numericValue();
+        this->Count   = (new Php::Value(params[1]))->numericValue();
         this->curPath = (new Php::Value(params[2]))->stringValue();
     }
         
@@ -175,7 +183,10 @@ public:
      * @param int $interval
      */
     void setInterval(Php::Parameters &params) {
-        _set_param(params, &this->interval);
+        if (params.size() == 0 || (int)params[0] <= 0) {
+            return;
+        }
+        this->interval = params[0];//(new Php::Value(params[0]))->numericValue();
     }
         
     /*
@@ -192,6 +203,18 @@ public:
      */
     void setPostfix(Php::Parameters &params) {
         _set_param(params, &this->postfix);
+    }
+
+    /*
+     * function showCount
+     * set showCount
+     * @param bool $sc
+     */
+    void showCount(Php::Parameters &params) {
+        if (params.size() == 0) {
+            return;
+        }
+        this->_showCount = (bool)params[0]; //(new Php::Value(params[0]))->boolValue();
     }
         
     // GETERS
@@ -287,7 +310,15 @@ public:
             rez += this->space + this->prnt(this->pageCnt-1);
         }
         
-        return "<div class=\"" + this->css_name + "\">" + rez + "</div>";
+
+        return this->_showCount ? (
+        			"<div class=\"" + this->css_name + "\">" + 
+        			rez + 
+        			"<b>" + std::to_string(this->Count) + "</b>" +
+        			"</div>"
+	        	) : (
+	        		"<div class=\"" + this->css_name + "\">" + rez + "</div>"
+	        	);
     }
         
         
@@ -369,10 +400,10 @@ private:
      * default int seter
      */
     void _set_param(Php::Parameters &params, int * var) {
-        if (params.size() == 0) {
+        if (params.size() == 0 || (int)params[0] < 0) {
             return;
         }
-        *var = params[0];
+        *var = (new Php::Value(params[0]))->numericValue();
     }
 
 };
@@ -387,11 +418,11 @@ Php::Value GETpageNom(Php::Parameters &params) {
     if (params.size() == 0) {
         return 0;
     }
-    string var = (new Php::Value(params[0]))->stringValue();
-    string get = Php::globals["_GET"][var];
-    int    rez = (new Php::Value( get ))->numericValue();
+    string var   = (new Php::Value(params[0]))->stringValue();
+    string get   = Php::globals["_GET"][var];
+    long int rez = (new Php::Value( get ))->numericValue();
     // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-    return rez ? ((int)rez-1):0;
+    return rez ? (rez-1) : 0;
 }
 
 // Symbols are exported according to the "C" language
@@ -443,6 +474,9 @@ extern "C"
                 }),
                 Php::Public("setInterval", Php::Method<myScrNavApp>(&myScrNavApp::setInterval), {
                     Php::ByVal("interval", Php::numericType)
+                }),
+                Php::Public("showCount", Php::Method<myScrNavApp>(&myScrNavApp::showCount), {
+                    Php::ByVal("sc", Php::boolType)
                 })
                 
                 
