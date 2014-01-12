@@ -111,12 +111,8 @@ public:
         this->css_name = "navline";
         this->space    = "<space></space>";
         this->prefix   = "?part=";
-        this->postfix  = "&prm=132";
+        this->postfix  = "";
         this->curPath  = "";
-        
-        
-        std::cout << "myScrNavApp::myScrNavApp" << std::endl;
-        
     }
         
     /*
@@ -126,22 +122,6 @@ public:
      * @param string $curPath
      */
     virtual void __construct(Php::Parameters &params) {
-        
-        cout << "myScrNavApp::__construct" << endl;
-        
-        
-        //cout << "global g1: " << Php::globals["g1"].stringValue() << endl;
-        /*
-        string q = Php::globals["_GET"]["q"];
-        cout << "global _GET[q] = " << q << endl;
-        cout << "global _GET[q] = " << q.size() << endl;
-        cout << "global _GET[q] = " << (new Php::Value(q))->numericValue() << endl;
-        */
-        
-        
-        
-        
-        
         if (params.size() != 3) {
             throw Php::Exception("Requires 3 parameters");
             this->pageNo  = 0;
@@ -154,12 +134,7 @@ public:
         this->curPath = (new Php::Value(params[2]))->stringValue();
     }
         
-    ~myScrNavApp() {
-        std::cout << "myScrNavApp::~myScrNavApp" << std::endl;
-        //string output = env.call("strtoupper","test in lowercase");
-        //cout << "output: " << output << endl;
-    }
-        
+    virtual ~myScrNavApp() {}
     virtual void __destruct() {}
     
     // SETERS
