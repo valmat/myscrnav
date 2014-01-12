@@ -1,30 +1,19 @@
 /**
  *  myscrnav.cpp
  *  app myScrNav
- *  Печать, навигационной строки для листания экранов,
+ *  Печать, навигационной строки для листания экранов (pageinator),
  *  Расчет стартовой точки и лимита для постраничного вывода элементов
  *  @author valmat <ufabiz@gmail.com>
- *  @github https://github.com/valmat
+ *  @github https://github.com/valmat/myscrnav
  */
 
 
-/**
- *  Default Cpp libraries
- */
- 
+
 #include <string>
 #include <iostream>
-
-//#include <typeinfo>
-
-/**
- *  Our own library.
- */
 #include <phpcpp.h>
 
-/**
- *  Namespace to use
- */
+
 using namespace std;
 
 class myScrNavApp : public Php::Base {
