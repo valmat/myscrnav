@@ -86,6 +86,11 @@
       */
     private $_showCount = false;
     
+    /**
+      * Был ли инициализирован объект (был ли произведен расчет)
+      */
+    private $inited = false;
+    
     
     /*
      * function __construct
@@ -104,6 +109,11 @@
      * function init
      */
     private function init() {
+        if($this->inited) {
+            return false;
+        }
+        $this->inited = true;
+        
         if($this->interval*$this->pageNo >= $this->Count || $this->pageNo<0) {
             $this->pageNo = 0;
         }
@@ -277,6 +287,7 @@
      * @return int
      */
     public function getStartPos() {
+        $this->init();
         return $this->startPos;
     }    
         
@@ -286,6 +297,7 @@
      * @return int
      */
     public function getLimitPos() {
+        $this->init();
         return $this->limitPos;
     }    
         
@@ -295,6 +307,7 @@
      * @return int
      */
     public function getPageCnt() {
+        $this->init();
         return $this->pageCnt;
     }    
         
@@ -304,6 +317,7 @@
      * @return int
      */
     public function getPageNo() {
+        $this->init();
         return $this->pageNo;
     }    
         

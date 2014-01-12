@@ -46,7 +46,12 @@ echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
     $scr->showCount(true);
     
     
-    
+    var_export(array(
+	'getStartPos' => $scr->getStartPos(),
+	'getLimitPos' => $scr->getLimitPos(),
+	'getPageCnt' => $scr->getPageCnt(),
+	'getPageNo' => $scr->getPageNo(),
+    ));
 
     
 ?>
@@ -137,18 +142,8 @@ echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
     $lim   = $start+$scr->getLimitPos();
     
     for($i = $start; $i<$lim; $i++) {
-        //echo '<br>' . $arr[$i];
         echo '<br>' , $i+1;
     }
-    
-    var_export(array(
-	'getStartPos' => $scr->getStartPos(),
-	'getLimitPos' => $scr->getLimitPos(),
-	'getPageCnt' => $scr->getPageCnt(),
-	'getPageNo' => $scr->getPageNo(),
-    ));
-    
-    
     
     //unset($scr);
     
@@ -156,10 +151,11 @@ echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
 ################################################################################
 
 echo '<br>';
-echo '<hr>memory usage: '.(memory_get_usage()/1024-$memory_get_usage_start) .'Kb<br>';
-echo '<hr>memory peak_usage: '.(memory_get_peak_usage()/1024-$memory_get_usage_start) .'Kb<br>';
+echo '<hr>time: '.ceil( 1000*(microtime_float() - $time_start)*1000 ).' MicroSec<br>';
 
-echo '<hr>time: '.( 1000*(microtime_float() - $time_start)*1000 ).' ms<br>';
+echo '<hr>memory usage: '.ceil( (memory_get_usage()/1024-$memory_get_usage_start)*10)/10 .'Kb<br>';
+echo '<hr>memory peak_usage: '.ceil( (memory_get_peak_usage()/1024-$memory_get_usage_start)*10)/10 .'Kb<br>';
+
 /**/
 ?>
 </body>

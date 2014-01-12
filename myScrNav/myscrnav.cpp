@@ -98,6 +98,11 @@ private:
       */
     bool _showCount;
     
+    /**
+      * Был ли инициализирован объект (был ли произведен расчет)
+      */
+    bool _inited;
+    
 public:
     
     myScrNavApp() {
@@ -121,6 +126,7 @@ public:
 
         // bool
         this->_showCount = false;
+        this->_inited    = false;
     }
         
     /*
@@ -224,6 +230,7 @@ public:
      * @return int
      */
     Php::Value getStartPos() {
+    	this->init();
         return this->startPos;
     }    
         
@@ -233,6 +240,7 @@ public:
      * @return int
      */
     Php::Value getLimitPos() {
+    	this->init();
         return this->limitPos;
     }    
         
@@ -242,6 +250,7 @@ public:
      * @return int
      */
     Php::Value getPageCnt() {
+    	this->init();
         return this->pageCnt;
     }    
         
@@ -251,6 +260,7 @@ public:
      * @return int
      */
     Php::Value getPageNo() {
+    	this->init();
         return this->pageNo;
     }
         
@@ -260,6 +270,7 @@ public:
      * @return int
      */
     Php::Value getInterval() {
+    	this->init();
         return this->interval;
     }
         
@@ -329,6 +340,11 @@ private:
      * function init
      */
     void init() {
+        if(this->_inited) {
+            return;
+        }
+        this->_inited = true;
+
         if(this->interval*this->pageNo >= this->Count || this->pageNo < 0) {
             this->pageNo = 0;
         }
