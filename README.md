@@ -5,6 +5,7 @@ Pagination php class and php (C++) extention
 Как пользоваться. Пример использования есть в исходниках: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
 
 Создаем pagination-объект из расширения: 
+
     scr = new myScrNav($pageNom, $Count, '/url/to/page/'); 
 
 Или из php класса:
