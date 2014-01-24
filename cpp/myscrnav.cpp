@@ -143,9 +143,9 @@ public:
             this->curPath = "";
             return;
         }
-        this->pageNo  = (new Php::Value(params[0]))->numericValue();
-        this->Count   = (new Php::Value(params[1]))->numericValue();
-        this->curPath = (new Php::Value(params[2]))->stringValue();
+        this->pageNo  = params[0].numericValue();
+        this->Count   = params[1].numericValue();
+        this->curPath = params[2].stringValue();
     }
         
     virtual ~myScrNavApp() {}
@@ -157,7 +157,7 @@ public:
      * @param string $space
      */
     void setSpace(Php::Parameters &params) {
-        _set_param(params, &this->space);
+        _set_param(params, this->space);
     }    
     
     /*
@@ -165,7 +165,7 @@ public:
      * @param string $css_name
      */
     void setCssName(Php::Parameters &params) {
-        _set_param(params, &this->css_name);
+        _set_param(params, this->css_name);
     }    
     
     /*
@@ -173,7 +173,7 @@ public:
      * @param int $mid_tab
      */
     void setMidTab(Php::Parameters &params) {
-        _set_param(params, &this->mid_tab);
+        _set_param(params, this->mid_tab);
     }    
     
     /*
@@ -181,7 +181,7 @@ public:
      * @param int $max_tab
      */
     void setMaxTab(Php::Parameters &params) {
-        _set_param(params, &this->max_tab);
+        _set_param(params, this->max_tab);
     }    
         
     /*
@@ -192,7 +192,7 @@ public:
         if (params.size() == 0 || (int)params[0] <= 0) {
             return;
         }
-        this->interval = params[0];//(new Php::Value(params[0]))->numericValue();
+        this->interval = params[0];
     }
         
     /*
@@ -200,7 +200,7 @@ public:
      * @param string $prefix
      */
     void setPrefix(Php::Parameters &params) {
-        _set_param(params, &this->prefix);
+        _set_param(params, this->prefix);
     }
         
     /*
@@ -208,7 +208,7 @@ public:
      * @param string $postfix
      */
     void setPostfix(Php::Parameters &params) {
-        _set_param(params, &this->postfix);
+        _set_param(params, this->postfix);
     }
 
     /*
@@ -220,7 +220,7 @@ public:
         if (params.size() == 0) {
             return;
         }
-        this->_showCount = (bool)params[0]; //(new Php::Value(params[0]))->boolValue();
+        this->_showCount = (bool)params[0];
     }
         
     // GETERS
@@ -404,22 +404,22 @@ private:
      * function _set_param
      * default string seter
      */
-    void _set_param(Php::Parameters &params, string * var) {
+    void _set_param(const Php::Parameters &params, string &var) {
         if (params.size() == 0) {
             return;
         }
-        *var = (new Php::Value(params[0]))->stringValue();
+        var = params[0].stringValue();
     }
 
     /*
      * function _set_param
      * default int seter
      */
-    void _set_param(Php::Parameters &params, int * var) {
+    void _set_param(const Php::Parameters &params, int &var) {
         if (params.size() == 0 || (int)params[0] < 0) {
             return;
         }
-        *var = (new Php::Value(params[0]))->numericValue();
+        var = params[0].numericValue();
     }
 
 };
@@ -434,9 +434,9 @@ Php::Value GETpageNom(Php::Parameters &params) {
     if (params.size() == 0) {
         return 0;
     }
-    string var   = (new Php::Value(params[0]))->stringValue();
+    string var   = params[0].stringValue();
     string get   = Php::globals["_GET"][var];
-    long int rez = (new Php::Value( get ))->numericValue();
+    long int rez = std::strtol( get.c_str(), nullptr, 10 );
     // (isset($_GET[var]))?((int)$_GET[var]-1):0;
     return rez ? (rez-1) : 0;
 }
