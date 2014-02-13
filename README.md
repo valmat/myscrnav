@@ -1,8 +1,15 @@
 Pagination php class and php (C++) extention
 
 Представлено два варианта Pagination-модуля. C++-extention & native-php Оба варианта рабочие. Идентичные интерфейсы, идентичное поведение.
+##Установка
+```
+make
+make install
+make test
+```
 
-Как пользоваться. Пример использования есть в исходниках: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
+##Как пользоваться
+Пример использования есть в исходниках: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
 
 Создаем pagination-объект из расширения: 
 

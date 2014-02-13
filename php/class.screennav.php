@@ -326,7 +326,7 @@
      * @return string
      */
     static function pageNo($var) {
-        return (isset($_GET[$var]))?((int)$_GET[$var]-1):0;
+        return (isset($_GET[$var]))?(max((int)$_GET[$var]-1,0)):0;
     }
     
 }

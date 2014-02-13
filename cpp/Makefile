@@ -30,3 +30,11 @@ ${OBJECTS}:
 install:
 		cp -f ${RESULT} ${LIBRARY_DIR}
 		cp -f ${PHPINIFILE}	${PHP_CONFIG_DIR}
+test:
+		cd ../tests && ./test.sh
+
+testout:
+		cd ../tests && /usr/bin/php run-tests.php t/native/*.phpt t/ext/*.phpt -s testout -p /usr/bin/php && mv testout ../testout
+
+
+
