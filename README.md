@@ -1,45 +1,48 @@
-Pagination php class and php (C++) extention
+Pagination php class and php (C++) extension
 
-Представлено два варианта Pagination-модуля. C++-extention & native-php Оба варианта рабочие. Идентичные интерфейсы, идентичное поведение.
-##Установка
+Presents two variants of Pagination module. C++-extension & native-php. Both variants are workable. Identical interfaces, identical behavior.
+##Installation
 ```
 make
-make install
 make test
+make install
 ```
 
-##Как пользоваться
-Пример использования есть в исходниках: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
+##How to use
+A usage example is the source code: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
 
-Создаем pagination-объект из расширения: 
+Create the pagination-object of myScrNav from extension:
 
     scr = new myScrNav($pageNom, $Count, '/url/to/page/'); 
 
-Или из php класса:
+Or from php class:
 
     require 'php/class.screennav.php';
     $scr = new ScreenNav($pageNom, $Count, '/url/to/page/'); 
 
-Задаем необходимые параметры:
+Specify the necessary parameters:
 
-    $scr->setInterval(10); // Сколько объектов на странице
-    $scr->setPrefix('?qwe&part='); // URL prefix
-    $scr->setPostfix('&prm=132'); // URL prefix
-    $scr->setSpace('...'); // Разделитель блоков табов
-    $scr->setCssName('newClassName'); // Имя класса css блока управления постраничным выводом
-    $scr->setMidTab(15); // см. info.png
-    $scr->setMaxTab(5); // см. info.png
-    $scr->showCount(true); // Показывать ли общее количество элементов
-
+```php
+$scr->setInterval(10);            // How many objects on the page
+$scr->setPrefix('?qwe&part=');    // URL prefix
+$scr->setPostfix('&prm=132');     // URL prefix
+$scr->setSpace('...');            // Splitter blocks tabs
+$scr->setCssName('newClassName'); // The css class name control unit paged output
+$scr->setMidTab(15);              // see info.png
+$scr->setMaxTab(5);               // see info.png
+$scr->showCount(true);            // Whether to show the total number of items?
+```
 ![MidTab & MaxTab](https://raw2.github.com/valmat/myscrnav/master/info.png)
-Кроме того доступны следующие методы для получения вычисленных данных:
+Additionally, the following methods are available to obtain calculated data:
+```php
+getStartPos() // The number of the first item on the current page (to fetch from database)
+getLimitPos() // The length of the list elements on the current page (to fetch from database)
+getPageCnt()  // Number of pagination pages
+getPageNo()   // The current number (calculated) of the current page
+show()        // Returns the control-element to the paginal laying (html)
+```
+I.e. you can control the paginal laying out and make queries to the database on the basis of this pagination. Appearance, of course, fully customizable via css.
 
-    getStartPos() // Номер начального элемента на текущей странице (для выборки из БД)
-    getLimitPos() // Длина списка элементов на странице на текущей странице (для выборки из БД)
-    getPageCnt() // Количество страниц при разбивке на части
-    getStartPos() // Номер (вычисленный) текущей страницы
-    show()         // Возвращает собственно сам элемент управления постраничной разбивкой (html)
+--
 
-Т.е. можно управлять постраничной разбивкой и делать запросы к БД на основе этой постраничной разбивки. Внешний вид, разумеется, полностью настраивается через css
-
-License BSD
+**License BSD**

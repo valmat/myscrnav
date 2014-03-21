@@ -178,6 +178,7 @@ function verify_config()
 {
 	global $php;
 
+	/*
 	if (empty($php) || !file_exists($php)) {
 		error('environment variable TEST_PHP_EXECUTABLE must be set to specify PHP executable!');
 	}
@@ -185,6 +186,7 @@ function verify_config()
 	if (function_exists('is_executable') && !is_executable($php)) {
 		error("invalid PHP executable specified by TEST_PHP_EXECUTABLE  = $php");
 	}
+	*/
 }
 
 if (getenv('TEST_PHP_LOG_FORMAT')) {
@@ -599,6 +601,7 @@ if (isset($argc) && $argc > 1) {
 					break;
 				case 'p':
 					$php = $argv[++$i];
+					//var_export($argv);
 					putenv("TEST_PHP_EXECUTABLE=$php");
 					$environment['TEST_PHP_EXECUTABLE'] = $php;
 					break;

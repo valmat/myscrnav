@@ -1,128 +1,119 @@
 /**
  *  myscrnav.cpp
  *  app myScrNav
- *  Печать, навигационной строки для листания экранов (pageinator),
+ *  
+ *  Print the navigation line for turning screens (pagination),
+ *  calculation of the start point and limit the output to a pager items.
+ *  
+ *  This extension is written in a style not familiar to C++ programmers,
+ *  but usual for php programmers.
+ *  I did it on purpose, to show how easy the program is written in php can be rewritten in php-cpp.
+ *
+ *  Печать, навигационной строки для листания экранов (pagination),
  *  Расчет стартовой точки и лимита для постраничного вывода элементов
+ *
+ *  Это расширение написано в стиле не привычном для программистов C++, 
+ *  но привычном для программистов php.
+ *  Я сделал это нарочно, что бы показать как легко программа, написанная на php, может быть переписана на php-cpp.
+ *
  *  @author valmat <ufabiz@gmail.com>
  *  @github https://github.com/valmat/myscrnav
  */
 
 #include <phpcpp.h>
 
-using namespace std;
+using std::string;
 
 class myScrNavApp : public Php::Base {
 private:
     /**
-     * Количество элементов на странице
+     * The number of items per page
      */
-    int interval;
+    int interval = 20;
     
     /**
-     * Максимальный отображаемый отступ
+     * Maximum displayed offset
      */
-    int max_tab;
+    int max_tab  = 6;
     
     /**
-     * Размер среднего таба. Если 0, то не используется
+     * The average size offset. If 0 is not used
      */
-    int mid_tab;
+    int mid_tab  = 10;
     
     /**
-     * Имя класса css для навигационной линии
+     * The css class name for the navigation line
      */
-    string css_name;
+    string css_name = "navline";
     
     /**
-     * Строка для обозначения пропуска символов. Например ' ... '
+     * The string to denote missing symbols. For example ' ... '
      */
-    string  space;
+    string  space   = "<space></space>";
     
     /**
-     * Префикс, добавляемый для обозначения номера страниц
+     * Prefix added to indicate page numbers
      */
-    string prefix;
+    string prefix   = "?part=";
     
     /**
-     * Префикс, добавляемый для обозначения номера страниц
+     * Postfix added to indicate page numbers
      */
-    string postfix;
+    string postfix  = "";
     
     /**
-      * Номер начального элемента
+      * The number of the first item
       */
-    int startPos;
+    int startPos = 0;
     
     /**
-      * Длина списка элементов
+      * The length of the list items on current page
       */
-    int limitPos;
+    int limitPos = 0;
     
     /**
-      * Количество страниц при разбивке на части
+      * Number of pagination pages
       */
-    int pageCnt;
+    int pageCnt  = 0;
     
     /**
-      * Количество элементов
+      * Number of items
       */
     long int Count;
     
     /**
-      * Номер страницы
+      * Page number
       */
-    int pageNo;
+    int pageNo   = 0;
     
     /**
-      * Начало пути для текущего набора экранов. Со слешем в конце
+      * The beginning of the path for the current set of screens. With a slash at the end
       */
-    string curPath;
+    string curPath  = "";
     
     /**
-      * Положение левого индекса
+      * The position of the left index
       */
-    int LeftInd;
+    int LeftInd  = 0;
     
     /**
-      * Положение правого индекса
+      * The position of the right index
       */
-    int RightInd;
+    int RightInd = 0;
     
     /**
-      * Показывать ли количество объектов
+      * Whether to show the number of objects?
       */
-    bool _showCount;
+    bool _showCount = false;
     
     /**
-      * Был ли инициализирован объект (был ли произведен расчет)
+      * Was initialized, the object (was it calculated)?
       */
-    bool _inited;
+    bool _inited    = false;
     
 public:
     
-    myScrNavApp() {
-        // int
-        this->interval = 20;
-        this->max_tab  = 6;
-        this->mid_tab  = 10;
-        this->startPos = 0;
-        this->limitPos = 0;
-        this->pageCnt  = 0;
-        this->pageNo   = 0;
-        this->LeftInd  = 0;
-        this->RightInd = 0;
-        
-        // string
-        this->css_name = "navline";
-        this->space    = "<space></space>";
-        this->prefix   = "?part=";
-        this->postfix  = "";
-        this->curPath  = "";
-
-        // bool
-        this->_showCount = false;
-        this->_inited    = false;
-    }
+    myScrNavApp() {}
         
     /*
      * function __construct
@@ -220,7 +211,7 @@ public:
         
     // GETERS
     /*
-     * Номер начального элемента
+     * The number of the first element
      * function getStartPos
      * @return int
      */
@@ -230,7 +221,7 @@ public:
     }    
         
     /*
-     * Длина списка элементов
+     * The length of the list elements
      * function getLimitPos
      * @return int
      */
@@ -241,6 +232,7 @@ public:
         
     /*
      * Количество страниц при разбивке на части
+     * Number of pagination pages
      * function getPageCnt
      * @return int
      */
@@ -250,7 +242,7 @@ public:
     }    
         
     /*
-     * Номер страницы
+     * Get page number
      * function getStartPos
      * @return int
      */
@@ -260,7 +252,7 @@ public:
     }
         
     /*
-     * Номер страницы
+     * get the number of items per page
      * function getInterval
      * @return int
      */
@@ -272,6 +264,7 @@ public:
         
         
     /*
+     * Returns html code of the navigation line
      * function show
      * @param void
      */
@@ -282,11 +275,11 @@ public:
         string rez;
         int i;
         
-        // Если количество страниц меньше 2, навигационная линия не требуется
+        // If the number of pages is less than 2, the navigation line is not required
         if(this->pageCnt < 2)
             return "";
        
-        // Левый край
+        // The left edge
         rez =  "";
         if(1==this->LeftInd) {
             rez = this->prnt(0);
@@ -297,7 +290,7 @@ public:
             }
         }
         
-        // Середина
+        // Mid
         for(i=this->LeftInd; i < this->pageNo; i++) {
             rez += this->prnt(i);
         }
@@ -306,7 +299,7 @@ public:
             rez += this->prnt(i);
         }
         
-        // Правый край
+        // The right edge
         if((this->pageCnt-2)==this->RightInd) {
             rez += this->prnt(this->pageCnt-1);
         }else if(this->RightInd < (this->pageCnt-1)) {
@@ -331,7 +324,7 @@ public:
 private:
         
     /*
-     * Расчет основных параметров
+     * Calculation of the main parameters
      * function init
      */
     void init() {
@@ -354,12 +347,12 @@ private:
         int RightInd = this->pageNo + this->max_tab;
         
         if(this->pageNo < this->max_tab) {
-            // длина правого отствупа
+            // the length of the right indentation
             int RightTab = this->max_tab + this->max_tab - this->pageNo;
             LeftInd  = 0;
             RightInd = std::min(this->pageNo + RightTab, pageCnt-1);
         }else if(pageCnt - 1 - this->pageNo < this->max_tab) {
-            // длина левого отствупа
+            // the length of the left otstupat
             int LeftTab  = this->max_tab + this->max_tab - pageCnt + this->pageNo;
             LeftInd  = std::max(0, this->pageNo - LeftTab - 1);
             RightInd = pageCnt-1;
@@ -374,11 +367,15 @@ private:
     }
         
     /*
-     * Печать ссылки для навигационной линии
-     * function prnt
+     * Print the html-links for the navigation line
+     * Helper function prnt
+     * @param int iUrl     integer url
+     * @param bool isCur   integer caption
+     * @return std::string html-link
      */
     string prnt(int iUrl, bool isCur = false) {
         string link;
+        // integer caption
         int iCapt;
         if(0 == iUrl) {
             iCapt = 1;
@@ -396,7 +393,7 @@ private:
     }
 
     /*
-     * function _set_param
+     * Helper function _set_param
      * default string seter
      */
     void _set_param(const Php::Parameters &params, string &var) {
@@ -407,7 +404,7 @@ private:
     }
 
     /*
-     * function _set_param
+     * Helper function _set_param
      * default int seter
      */
     void _set_param(const Php::Parameters &params, int &var) {
@@ -421,7 +418,7 @@ private:
 
         
 /*
- * Определяет и возвращает номер страницы
+ * Defines and returns the page number
  * @param string
  * @return string
  */
@@ -429,13 +426,26 @@ Php::Value GETpageNom(Php::Parameters &params) {
     if (params.size() == 0) {
         return 0;
     }
-    string var   = params[0].stringValue();
-    string get   = Php::globals["_GET"][var];
-    long int rez = std::strtol( get.c_str(), nullptr, 10 );
+    auto var   = params[0].stringValue();
+    //if ( Php::empty(Php::GET[var]) ) {
+    //    return 0;
+    //}
+
+    //auto get   = Php::GET[var].numericValue(); --->  it seems it's still not working and requires debugging
+                                                //     We'll go the other way:
+    Php::Value G = Php::GLOBALS["_GET"][var];
+    auto get   = G.numericValue();
+    
+    //long int rez = std::strtol( get.c_str(), nullptr, 10 );
     // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-    return rez ? (rez-1) : 0;
+    //return rez ? (rez-1) : 0;
+    return get ? (get-1) : 0;
+    
 }
 
+
+
+        
 // Symbols are exported according to the "C" language
 extern "C" 
 {
@@ -443,63 +453,72 @@ extern "C"
     PHPCPP_EXPORT void *get_module()
     {
         // create extension
-        static Php::Extension extension("my_Screen_Nav","1.0");
+        static Php::Extension extension("my_Screen_Nav","0.2");
+                
+        /*
+         *   Add our C++ class myScrNavApp in our expansion.
+         *   In php it will be named `myScrNav`
+         */
+        Php::Class<myScrNavApp> customClass("myScrNav");
+
+        /*
+         *   add methods to `myScrNav`
+         */
+        customClass.method("__construct", &myScrNavApp::__construct, {
+            Php::ByVal("pageNo",  Php::Type::Numeric),
+            Php::ByVal("Count",   Php::Type::Numeric),
+            Php::ByVal("curPath", Php::Type::String)
+        });
         
-        // add the custom class ot the extension
-        extension.add("myScrNav", Php::Class<myScrNavApp>({
-                Php::Public("__construct", Php::Method<myScrNavApp>(&myScrNavApp::__construct), {
-                    Php::ByVal("pageNo",  Php::numericType),
-                    Php::ByVal("Count",   Php::numericType),
-                    Php::ByVal("curPath", Php::stringType)
-                }),
-                
-                Php::Public("show", Php::Method<myScrNavApp>(&myScrNavApp::show)),
-                
-                //GETERS
-                Php::Public("getStartPos", Php::Method<myScrNavApp>(&myScrNavApp::getStartPos)),
-                Php::Public("getLimitPos", Php::Method<myScrNavApp>(&myScrNavApp::getLimitPos)),
-                Php::Public("getPageCnt",  Php::Method<myScrNavApp>(&myScrNavApp::getPageCnt)),
-                Php::Public("getPageNo", Php::Method<myScrNavApp>(&myScrNavApp::getPageNo)),
-                
-                Php::Protected("getInterval", Php::Method<myScrNavApp>(&myScrNavApp::getInterval),{}),
-                
-                
-                // SETERS
-                Php::Public("setSpace", Php::Method<myScrNavApp>(&myScrNavApp::setSpace), {
-                    Php::ByVal("space", Php::stringType)
-                }),
-                Php::Public("setCssName", Php::Method<myScrNavApp>(&myScrNavApp::setCssName), {
-                    Php::ByVal("css_name", Php::stringType)
-                }),
-                Php::Public("setPrefix", Php::Method<myScrNavApp>(&myScrNavApp::setPrefix), {
-                    Php::ByVal("prefix", Php::stringType)
-                }),
-                Php::Public("setPostfix", Php::Method<myScrNavApp>(&myScrNavApp::setPostfix), {
-                    Php::ByVal("postfix", Php::stringType)
-                }),
-                Php::Public("setMidTab", Php::Method<myScrNavApp>(&myScrNavApp::setMidTab), {
-                    Php::ByVal("mid_tab", Php::numericType)
-                }),
-                Php::Public("setMaxTab", Php::Method<myScrNavApp>(&myScrNavApp::setMaxTab), {
-                    Php::ByVal("max_tab", Php::numericType)
-                }),
-                Php::Public("setInterval", Php::Method<myScrNavApp>(&myScrNavApp::setInterval), {
-                    Php::ByVal("interval", Php::numericType)
-                }),
-                Php::Public("showCount", Php::Method<myScrNavApp>(&myScrNavApp::showCount), {
-                    Php::ByVal("sc", Php::boolType)
-                })
-                
-                
-            }));
-                
-                
-            extension.add("myScrNav_pageNoGET", GETpageNom, {
-                Php::ByVal("var", Php::stringType)
-            });
-                
+        customClass.method("show", &myScrNavApp::show);
+        
+        //GETERS
+        customClass.method("getStartPos", &myScrNavApp::getStartPos);
+        customClass.method("getLimitPos", &myScrNavApp::getLimitPos);
+        customClass.method("getPageCnt",  &myScrNavApp::getPageCnt);
+        customClass.method("getPageNo",   &myScrNavApp::getPageNo);
+        
+        customClass.method("getInterval", &myScrNavApp::getInterval);
+        
+        
+        // SETERS
+        customClass.method("setSpace", &myScrNavApp::setSpace, {
+            Php::ByVal("space", Php::Type::String)
+        });
+        customClass.method("setCssName", &myScrNavApp::setCssName, {
+            Php::ByVal("css_name", Php::Type::String)
+        });
+        customClass.method("setPrefix", &myScrNavApp::setPrefix, {
+            Php::ByVal("prefix", Php::Type::String)
+        });
+        customClass.method("setPostfix", &myScrNavApp::setPostfix, {
+            Php::ByVal("postfix", Php::Type::String)
+        });
+        customClass.method("setMidTab", &myScrNavApp::setMidTab, {
+            Php::ByVal("mid_tab", Php::Type::Numeric)
+        });
+        customClass.method("setMaxTab", &myScrNavApp::setMaxTab, {
+            Php::ByVal("max_tab", Php::Type::Numeric)
+        });
+        customClass.method("setInterval", &myScrNavApp::setInterval, {
+            Php::ByVal("interval", Php::Type::Numeric)
+        });
+        customClass.method("showCount", &myScrNavApp::showCount, {
+            Php::ByVal("sc", Php::Type::Bool)
+        });
+
+        // add the class to the extension
+        extension.add(customClass);
+        /*
+         *   The end of the class `myScrNav` definition
+         */
+
+        // pseudo-static function
+        extension.add("myScrNav_pageNoGET", GETpageNom, {
+            Php::ByVal("var", Php::Type::String)
+        });
                 
         // return the extension module
-        return extension.module();
+        return extension;
     }
 }
