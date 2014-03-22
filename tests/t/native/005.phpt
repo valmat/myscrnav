@@ -3,7 +3,7 @@ ScreenNav set1-get data
 --FILEEOF--
 <?php
 require dirname(__FILE__) . '/../../../php/class.screennav.php';
-require dirname(__FILE__) . '/../files/set_get.php';
+require dirname(__FILE__) . '/../../include/set_get.php';
 
 $scr = new ScreenNav(44, 8456, 'http://some/url');
 

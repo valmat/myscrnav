@@ -4,7 +4,7 @@ myScrNav get1 data
 <?php if (!extension_loaded("my_Screen_Nav")) print "skip"; ?>
 --FILEEOF--
 <?php
-require dirname(__FILE__) . '/../files/set_get.php';
+require dirname(__FILE__) . '/../../include/set_get.php';
 
 $scr = new myScrNav(45282944, 82, 'http://some/url');
 

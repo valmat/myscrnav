@@ -453,7 +453,7 @@ extern "C"
     PHPCPP_EXPORT void *get_module()
     {
         // create extension
-        static Php::Extension extension("my_Screen_Nav","0.2");
+        static Php::Extension extension("my_Screen_Nav","1.2");
                 
         /*
          *   Add our C++ class myScrNavApp in our expansion.

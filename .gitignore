@@ -1,4 +1,4 @@
 /.*
-/cpp/myscrnav.o
-/cpp/myscrnav.so
-
+*.o
+*.so
+*.txt

@@ -33,6 +33,18 @@ INI_DIR				=	/etc/php5/conf.d
 
 
 #
+#   PHP binary file
+#
+#   The path to the executable PHP binary file.
+#   Need to run tests.
+#   You can see the command "whereis -b php"
+#   Usually /usr/bin/php
+#
+
+PHP_BIN         =   `which php`
+
+
+#
 #	The extension dirs
 #
 #	This is normally a directory like /usr/lib/php5/20121221 (based on the 
@@ -119,33 +131,25 @@ OBJECTS				=	$(SOURCES:%.cpp=%.o)
 #
 
 all:					${OBJECTS} ${EXTENSION}
+	@echo
+	@echo "Build complete."
+	@echo "Don't forget to run 'make test'."
+	@echo
 
 ${EXTENSION}:			${OBJECTS}
-						${LINKER} ${LINKER_FLAGS} -o $@ ${OBJECTS} ${LINKER_DEPENDENCIES}
+				${LINKER} ${LINKER_FLAGS} -o $@ ${OBJECTS} ${LINKER_DEPENDENCIES}
 
 ${OBJECTS}:
-						${COMPILER} ${COMPILER_FLAGS} $@ ${@:%.o=%.cpp}
+				${COMPILER} ${COMPILER_FLAGS} $@ ${@:%.o=%.cpp}
 
-install:		
-						${CP} ${EXTENSION} ${EXTENSION_DIR}
-						${CP} ${INI} ${INI_DIR}
+install:
+				${CP} ${EXTENSION} ${EXTENSION_DIR}
+				${CP} ${INI} ${INI_DIR}
 				
 clean:
-						${RM} ${EXTENSION} ${OBJECTS}
+				${RM} ${EXTENSION} ${OBJECTS}
 
-#############################
 test:
-		cd ../tests && ./test.sh
-
-testout:
-		cd ../tests && /usr/bin/php run-tests.php t/native/*.phpt t/ext/*.phpt -s testout -p /usr/bin/php && mv testout ../testout
-
-
-htest:
-		cd ../tests && /usr/bin/hhvm run-tests.php t/native/*.phpt t/ext/*.phpt -p "/usr/bin/hhvm --php"
-
-htestout:
-		cd ../tests && /usr/bin/hhvm run-tests.php t/native/*.phpt t/ext/*.phpt -s testout -p "/usr/bin/hhvm --php" && mv testout ../testout
-
+				cd ../tests && ./test.sh -p "${PHP_BIN}" -e ${NAME}
 
 

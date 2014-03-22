@@ -15,9 +15,11 @@ sudo make install
 ```
 Then:
 ```
+git clone git@github.com:valmat/myscrnav.git
+cd myscrnav
 make
 make test
-make install
+sudo make install
 ```
 ##How to use
 A usage example is the source code: [https://github.com/valmat/myscrnav/blob/master/screennav_test.php](https://github.com/valmat/myscrnav/blob/master/screennav_test.php)
