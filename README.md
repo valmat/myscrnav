@@ -6,13 +6,13 @@ This is a workable example. And you can even use it in your projects, but it was
 
 
 ##Installation
-First you need to install the library [PHP-CPP](https://github.com/CopernicaMarketingSoftware/PHP-CPP)
-Perhaps if the compilation will fail or will not pass the tests, you will need to switch to a state in which the extension works exactly.
+First you need to install the library [PHP-CPP](https://github.com/CopernicaMarketingSoftware/PHP-CPP).
+Perhaps if the compilation will fail or will not pass the tests, you will need to switch to a state in which the extension works exactly (v1.1).
 So, to install PHP-CPP:
 ```
 git clone git@github.com:CopernicaMarketingSoftware/PHP-CPP.git
 cd PHP-CPP
-git checkout 5852a65e876421b118de9e76a9f83388be590690
+git checkout v1.1
 make
 make test
 sudo make install
