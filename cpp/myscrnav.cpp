@@ -21,7 +21,6 @@
  */
 
 #include <phpcpp.h>
-#include <iostream>
 
 using std::string;
 
@@ -323,7 +322,6 @@ public:
 
     /** 
      *  Defines and returns the page number
-     *
      */
     static Php::Value pageNo(Php::Parameters &params)
     {
@@ -331,22 +329,11 @@ public:
             return 0;
         }
         auto var   = params[0].stringValue();
-        //if ( Php::empty(Php::GET[var]) ) {
-        //    return 0;
-        //}
-
-        //auto get   = Php::GET[var].numericValue(); --->  it seems it's still not working and requires debugging
-                                                    //     We'll go the other way:
-        Php::Value G = Php::GLOBALS["_GET"][var];
-        auto get   = G.numericValue();
-        
-        //long int rez = std::strtol( get.c_str(), nullptr, 10 );
-        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-        //return rez ? (rez-1) : 0;
+        auto get   = Php::GET[var].numericValue();
         return get ? (get-1) : 0;
     }
     
-    
+
 private:
     /*
      * Calculation of the main parameters
