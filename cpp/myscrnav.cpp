@@ -85,7 +85,7 @@ private:
     /**
       * Page number
       */
-    int pageNo   = 0;
+    int pageNom   = 0;
     
     /**
       * The beginning of the path for the current set of screens. With a slash at the end
@@ -118,21 +118,21 @@ public:
         
     /*
      * function __construct
-     * @param int $pageNo
+     * @param int $pageNom
      * @param int $Count
      * @param string $curPath
      */
     virtual void __construct(Php::Parameters &params) {
         if (params.size() != 3) {
             throw Php::Exception("Requires 3 parameters");
-            this->pageNo  = 0;
-            this->Count   = 0;
-            this->curPath = "";
+            this->pageNom  = 0;
+            this->Count    = 0;
+            this->curPath  = "";
             return;
         }
-        this->pageNo  = params[0].numericValue();
-        this->Count   = params[1].numericValue();
-        this->curPath = params[2].stringValue();
+        this->pageNom  = params[0].numericValue();
+        this->Count    = params[1].numericValue();
+        this->curPath  = params[2].stringValue();
     }
         
     virtual ~myScrNavApp() {}
@@ -249,7 +249,7 @@ public:
      */
     Php::Value getPageNo() {
     	this->init();
-        return this->pageNo;
+        return this->pageNom;
     }
         
     /*
@@ -292,11 +292,11 @@ public:
         }
         
         // Mid
-        for(i=this->LeftInd; i < this->pageNo; i++) {
+        for(i=this->LeftInd; i < this->pageNom; i++) {
             rez += this->prnt(i);
         }
-        rez += this->prnt(this->pageNo,true);
-        for(i=this->pageNo+1; i <= this->RightInd; i++) {
+        rez += this->prnt(this->pageNom, true);
+        for(i=this->pageNom+1; i <= this->RightInd; i++) {
             rez += this->prnt(i);
         }
         
@@ -320,10 +320,34 @@ public:
 	        		"<div class=\"" + this->css_name + "\">" + rez + "</div>"
 	        	);
     }
+
+    /** 
+     *  Defines and returns the page number
+     *
+     */
+    static Php::Value pageNo(Php::Parameters &params)
+    {
+        if (params.size() == 0) {
+            return 0;
+        }
+        auto var   = params[0].stringValue();
+        //if ( Php::empty(Php::GET[var]) ) {
+        //    return 0;
+        //}
+
+        //auto get   = Php::GET[var].numericValue(); --->  it seems it's still not working and requires debugging
+                                                    //     We'll go the other way:
+        Php::Value G = Php::GLOBALS["_GET"][var];
+        auto get   = G.numericValue();
         
-        
+        //long int rez = std::strtol( get.c_str(), nullptr, 10 );
+        // (isset($_GET[var]))?((int)$_GET[var]-1):0;
+        //return rez ? (rez-1) : 0;
+        return get ? (get-1) : 0;
+    }
+    
+    
 private:
-        
     /*
      * Calculation of the main parameters
      * function init
@@ -334,28 +358,28 @@ private:
         }
         this->_inited = true;
 
-        if(this->interval*this->pageNo >= this->Count || this->pageNo < 0) {
-            this->pageNo = 0;
+        if(this->interval*this->pageNom >= this->Count || this->pageNom < 0) {
+            this->pageNom = 0;
         }
         
-        int startPos = this->interval * this->pageNo;
-        int limitPos = ( (this->interval*this->pageNo + this->interval - this->Count)<0 )?this->interval:(this->Count - this->interval*this->pageNo);
+        int startPos = this->interval * this->pageNom;
+        int limitPos = ( (this->interval*this->pageNom + this->interval - this->Count)<0 )?this->interval:(this->Count - this->interval*this->pageNom);
         
         int pageCnt = (this->Count - this->Count%this->interval)/this->interval;
         if(this->Count%this->interval>0) pageCnt++;
         
-        int LeftInd  = this->pageNo - this->max_tab;
-        int RightInd = this->pageNo + this->max_tab;
+        int LeftInd  = this->pageNom - this->max_tab;
+        int RightInd = this->pageNom + this->max_tab;
         
-        if(this->pageNo < this->max_tab) {
+        if(this->pageNom < this->max_tab) {
             // the length of the right indentation
-            int RightTab = this->max_tab + this->max_tab - this->pageNo;
+            int RightTab = this->max_tab + this->max_tab - this->pageNom;
             LeftInd  = 0;
-            RightInd = std::min(this->pageNo + RightTab, pageCnt-1);
-        }else if(pageCnt - 1 - this->pageNo < this->max_tab) {
+            RightInd = std::min(this->pageNom + RightTab, pageCnt-1);
+        }else if(pageCnt - 1 - this->pageNom < this->max_tab) {
             // the length of the left otstupat
-            int LeftTab  = this->max_tab + this->max_tab - pageCnt + this->pageNo;
-            LeftInd  = std::max(0, this->pageNo - LeftTab - 1);
+            int LeftTab  = this->max_tab + this->max_tab - pageCnt + this->pageNom;
+            LeftInd  = std::max(0, this->pageNom - LeftTab - 1);
             RightInd = pageCnt-1;
         }
         RightInd = std::min(RightInd, pageCnt-1);
@@ -418,35 +442,6 @@ private:
 };
 
         
-/*
- * Defines and returns the page number
- * @param string
- * @return string
- */
-Php::Value GETpageNom(Php::Parameters &params) {
-    if (params.size() == 0) {
-        return 0;
-    }
-    auto var   = params[0].stringValue();
-    //if ( Php::empty(Php::GET[var]) ) {
-    //    return 0;
-    //}
-
-    //auto get   = Php::GET[var].numericValue(); --->  it seems it's still not working and requires debugging
-                                                //     We'll go the other way:
-    Php::Value G = Php::GLOBALS["_GET"][var];
-    auto get   = G.numericValue();
-    
-    //long int rez = std::strtol( get.c_str(), nullptr, 10 );
-    // (isset($_GET[var]))?((int)$_GET[var]-1):0;
-    //return rez ? (rez-1) : 0;
-    return get ? (get-1) : 0;
-    
-}
-
-
-
-        
 // Symbols are exported according to the "C" language
 extern "C" 
 {
@@ -466,7 +461,7 @@ extern "C"
          *   add methods to `myScrNav`
          */
         customClass.method("__construct", &myScrNavApp::__construct, {
-            Php::ByVal("pageNo",  Php::Type::Numeric),
+            Php::ByVal("pageNom",  Php::Type::Numeric),
             Php::ByVal("Count",   Php::Type::Numeric),
             Php::ByVal("curPath", Php::Type::String)
         });
@@ -507,6 +502,9 @@ extern "C"
         customClass.method("showCount", &myScrNavApp::showCount, {
             Php::ByVal("sc", Php::Type::Bool)
         });
+        customClass.method("pageNo", &myScrNavApp::pageNo, {
+            Php::ByVal("var", Php::Type::String)
+        });
 
         // add the class to the extension
         extension.add(customClass);
@@ -514,11 +512,6 @@ extern "C"
          *   The end of the class `myScrNav` definition
          */
 
-        // pseudo-static function
-        extension.add("myScrNav_pageNoGET", GETpageNom, {
-            Php::ByVal("var", Php::Type::String)
-        });
-                
         // return the extension module
         return extension;
     }

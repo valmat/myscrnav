@@ -7,6 +7,6 @@ This test check myScrNav_pageNoGET('part') [part=5]
 --FILE--
 <?php
 $_GET['part']=5;
-echo var_dump(myScrNav_pageNoGET('part')) .PHP_EOL;
+echo var_dump(myScrNav::pageNo('part')) .PHP_EOL;
 --EXPECT--
 int(4)

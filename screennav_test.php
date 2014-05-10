@@ -20,7 +20,7 @@ $time_start = microtime_float();
     $cnt = 5681;
     
     if($MODE_CPP) {
-        $scr = new myScrNav(myScrNav_pageNoGET('part'), $cnt, 'http://test/phpcpp/myScrNav/screennav_test.php');
+        $scr = new myScrNav(myScrNav::pageNo('part'), $cnt, 'http://test/phpcpp/myScrNav/screennav_test.php');
     } else {
         require 'php/class.screennav.php';
         $scr = new ScreenNav(ScreenNav::pageNo('part'), $cnt, 'http://test/phpcpp/myScrNav/screennav_test.php');
